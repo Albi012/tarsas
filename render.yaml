@@ -1,0 +1,14 @@
+# Render Blueprint: a Render ebből a fájlból magától beállítja a szervert.
+# Használat: https://dashboard.render.com/blueprints → New Blueprint Instance → válaszd ki ezt a repót.
+services:
+  - type: web
+    name: tarsasozo
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22

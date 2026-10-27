@@ -90,13 +90,16 @@ Tesztek: `npm test`
 
 ## Felrakás az internetre (hogy bárhonnan játszhassatok)
 
-Bármelyik Node.js-t támogató tárhely jó, ami kezeli a WebSocketet, pl. **Render**:
+A repóban van egy `render.yaml`, így a [Render](https://render.com) magától beállít mindent:
 
-1. [render.com](https://render.com) → *New* → *Web Service* → válaszd ki ezt a GitHub repót.
-2. Build command: `npm install`, Start command: `npm start`.
-3. Kész – a kapott `https://...onrender.com` linket küldd el a haveroknak.
+1. Lépj be a [render.com](https://render.com)-ra (a GitHub-fiókoddal a legegyszerűbb).
+2. Nyisd meg: [dashboard.render.com/blueprints](https://dashboard.render.com/blueprints) → **New Blueprint Instance**.
+3. Válaszd ki a `tarsas` repót (ha nem látod, a *Configure GitHub* gombbal adj hozzá hozzáférést), majd **Apply**.
+4. Pár perc múlva kész – a kapott `https://tarsasozo-....onrender.com` linket küldd el a haveroknak.
 
-A szerver a `PORT` környezeti változót használja, ha a tárhely megadja.
+Ezután minden új feltöltés (push) után a Render magától frissíti az oldalt.
+
+Az ingyenes csomagban a szerver 15 perc tétlenség után elalszik; ilyenkor az első megnyitás kb. fél percig tölt.
 
 > Megjegyzés: a szobák a szerver memóriájában vannak, így a szerver újraindulásakor elvesznek.
 
