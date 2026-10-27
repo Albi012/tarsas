@@ -261,6 +261,131 @@ button.small { padding: 4px 8px; font-size: 0.85rem; margin-left: 8px; }
 .minus { color: var(--c0); }
 .last-round ul { margin: 8px 0 0; padding-left: 18px; font-size: 0.9rem; }
 
+/* ---- Makaó ---- */
+
+.opponents { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.opponent { display: flex; align-items: center; gap: 4px; padding: 6px 10px; border-radius: 10px; background: #f6f1e7; font-size: 0.9rem; }
+.opponent.current { background: #eaf0ff; box-shadow: inset 0 0 0 2px var(--accent); }
+.mini-backs { display: inline-flex; margin-left: 4px; }
+.mini-back { width: 10px; height: 15px; margin-left: -4px; border-radius: 2px; background: repeating-linear-gradient(45deg, #b33 0 3px, #d55 3px 6px); border: 1px solid white; }
+.card-table {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 20px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 50% 40%, #2f8a55, #1f6a3f);
+}
+.deck {
+  width: 78px;
+  height: 112px;
+  border-radius: 10px;
+  border: 3px solid white;
+  background: repeating-linear-gradient(45deg, #b33 0 6px, #d55 6px 12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  padding: 4px;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.6);
+}
+.deck small { font-weight: normal; }
+.table-info { color: white; min-width: 140px; display: grid; gap: 4px; }
+.table-info .muted { color: #d6eadb; }
+.wish { background: white; color: var(--text); border-radius: 8px; padding: 4px 8px; }
+.wish.red b { color: #d22; }
+.pending { background: #ffd36b; color: #5a3b00; font-weight: 700; border-radius: 8px; padding: 4px 8px; }
+.playing-card {
+  position: relative;
+  width: 70px;
+  height: 100px;
+  flex: none;
+  padding: 0;
+  border-radius: 9px;
+  border: 1px solid #bbb;
+  background: white;
+  color: #222;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.15);
+  transition: transform 0.12s;
+}
+.playing-card.red { color: #d22; }
+.playing-card:disabled { opacity: 1; }
+.playing-card .corner { position: absolute; top: 5px; left: 7px; font-size: 0.85rem; line-height: 1.05; text-align: center; }
+.playing-card .center-suit { font-size: 2.1rem; }
+.top-card { width: 78px; height: 112px; }
+.hand { display: flex; flex-wrap: wrap; gap: 8px; }
+.hand .playing-card:not(.playable) { filter: grayscale(0.4) brightness(0.92); }
+.hand .playing-card.playable { cursor: pointer; transform: translateY(-6px); box-shadow: 0 0 0 3px var(--accent), 0 6px 10px rgb(0 0 0 / 0.15); }
+.hand-title { font-size: 1rem; margin: 14px 0 12px; }
+.suit-picker { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; font-weight: 600; }
+.suit-picker button { font-size: 1.5rem; width: 52px; background: white; color: #222; border: 2px solid var(--line); }
+.suit-picker button.red { color: #d22; }
+
+/* ---- Torpedó ---- */
+
+.torpedo h3 { font-size: 0.95rem; margin: 0 0 6px; }
+.seas { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 700px) { .seas { grid-template-columns: 1fr; } }
+.sea-wrap { max-width: 420px; margin: 0 auto 12px; }
+.sea { display: grid; gap: 2px; }
+.sea-label { font-size: 0.7rem; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+.sea-cell { aspect-ratio: 1; background: #cfe6f7; border-radius: 3px; position: relative; }
+.sea-cell.ship { background: #6b7a8c; }
+.sea-cell.ship.sunk, .sea-cell.hit.sunk { background: #5a1c1c; }
+.sea-cell.revealed { background: #9aa7b6; }
+.sea-cell.hit { background: #e04848; }
+.sea-cell.hit::after { content: '✕'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 0.8em; }
+.sea-cell.miss::after, .sea-cell.auto::after { content: ''; position: absolute; inset: 38%; border-radius: 50%; background: #3a6d96; }
+.sea-cell.auto::after { background: #8fb3cf; }
+.sea-cell.aim { cursor: crosshair; }
+.sea-cell.aim:hover { background: #ffe9a8; }
+.sea-cell.last { outline: 2px solid #ffb400; outline-offset: -1px; }
+.row.center { justify-content: center; }
+
+/* ---- Dáma ---- */
+
+.dama-board { display: grid; grid-template-columns: repeat(8, 1fr); max-width: 520px; margin: 0 auto; border: 6px solid #6b4a2b; border-radius: 6px; }
+.dama-cell { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
+.dama-cell.light { background: #f1dfc0; }
+.dama-cell.dark { background: #a8794f; }
+.dama-cell.last { box-shadow: inset 0 0 0 3px #ffe08a; }
+.dama-cell.can-move { cursor: pointer; }
+.dama-cell.can-move .dama-piece { box-shadow: 0 0 0 3px white, inset 0 -4px 0 rgb(0 0 0 / 0.25); }
+.dama-cell.target { cursor: pointer; background: #6f9e5a; }
+.dama-cell.target::after { content: ''; width: 30%; height: 30%; border-radius: 50%; background: rgb(255 255 255 / 0.7); }
+.dama-piece {
+  width: 78%;
+  height: 78%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.7rem, 3vw, 1.3rem);
+  box-shadow: inset 0 -4px 0 rgb(0 0 0 / 0.25);
+  border: 2px solid rgb(0 0 0 / 0.35);
+}
+.dama-piece.selected { outline: 4px solid #ffe08a; }
+.dama-piece.captured { opacity: 0.35; }
+
+/* ---- Pontok és dobozok ---- */
+
+.dots .board-wrap { max-width: 520px; margin: 0 auto; }
+.dots-board { width: 100%; display: block; }
+.dot-point { fill: #3b3329; }
+.guide { stroke: #d9cfc0; stroke-width: 0.03; stroke-dasharray: 0.08 0.08; }
+.box { opacity: 0.35; }
+.drawn { stroke-width: 0.1; stroke-linecap: round; }
+.drawn.last { stroke-width: 0.16; }
+.free-line { cursor: pointer; }
+.free-line .hit { fill: transparent; }
+.free-line .ghost { stroke-width: 0.1; stroke-linecap: round; opacity: 0; }
+.free-line:hover .ghost { opacity: 0.5; }
+.free-line .ghost, .free-line:not(:hover) .ghost { transition: opacity 0.1s; }
+
 #toast {
   position: fixed;
   bottom: 20px;

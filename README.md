@@ -8,8 +8,12 @@ Böngészőben játszható társasjátékok: mindenki a saját gépéről vagy t
 |---|---|---|
 | 🎲 **Ki nevet a végén?** | 2–4 fő | A klasszikus: vidd haza mind a 4 bábudat, és üsd ki a többieket! |
 | 🦹 **Tolvajok éjszakája** ✨ | 2–6 fő | **Saját találmány.** Blöffös tolvajjáték, lásd lent. |
+| 🃏 **Makaó** | 2–6 fő | Kártyajáték: szabadulj meg elsőként a lapjaidtól (7-es: húzz kettőt, ász: kimaradsz, bubi: színkérés). |
 | 🎰 **Kockapóker** | 1–6 fő | Yahtzee: 5 kocka, 3 dobás, 13 kategória. |
+| 🚢 **Torpedó** | 2 fő | Süllyeszd el az ellenfél rejtett flottáját! |
+| 🔲 **Pontok és dobozok** | 2–4 fő | Húzz vonalakat, és zárd be a legtöbb dobozt! |
 | ⚪ **Malom** | 2 fő | Rakj ki hármas sorokat, és vedd le az ellenfél bábuit! |
+| 👑 **Dáma** | 2 fő | Kötelező ütés, többes ütés, repülő dáma. |
 | ❌ **Amőba** | 2 fő | 5 egy sorban, 15×15-ös táblán. |
 | 🔴 **Négy a sorban** | 2 fő | Dobd be a korongokat, és rakj ki négyet egy vonalban! |
 

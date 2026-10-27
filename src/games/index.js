@@ -2,8 +2,12 @@
 const list = [
   require('./ludo'),
   require('./thieves'),
+  require('./makao'),
   require('./yahtzee'),
+  require('./torpedo'),
+  require('./dots'),
   require('./malom'),
+  require('./dama'),
   require('./amoba'),
   require('./connect4'),
 ];
