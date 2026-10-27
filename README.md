@@ -7,12 +7,12 @@ Böngészőben játszható társasjátékok: mindenki a saját gépéről vagy t
 | Játék | Létszám | |
 |---|---|---|
 | 🎲 **Ki nevet a végén?** | 2–4 fő | A klasszikus: vidd haza mind a 4 bábudat, és üsd ki a többieket! |
-| 🦹 **Tolvajok éjszakája** ✨ | 2–6 fő | **Saját találmány.** Blöffös tolvajjáték, lásd lent. |
-| 🎈 **Lufi** ✨ | 2–6 fő | **Saját találmány.** Kockáztatós pumpálós játék. |
-| ⛏️ **Kincsásók** ✨ | 2–6 fő | **Saját találmány.** Dedukciós kincskeresés titkos nyomokkal. |
-| 🔟 **Tízes** ✨ | 2–4 fő | **Saját találmány.** Laprakós játék: foglalj tízesekkel! |
-| 🔐 **Széffeltörők** ✨ | 1–6 fő | **Saját találmány.** Kooperatív kódfejtés. |
-| 🚩 **Aknapárbaj** ✨ | 2–4 fő | **Saját találmány.** Versengő aknakereső. |
+| 🦹 **Tolvajok éjszakája** | 2–6 fő | Blöffös tolvajjáték: rabold ki a legjobb házat, de ne ott, ahol a rendőr les! |
+| 🎈 **Lufi** | 2–6 fő | Kockáztatós pumpálós játék. |
+| ⛏️ **Kincsásók** | 2–6 fő | Dedukciós kincskeresés titkos nyomokkal. |
+| 🔟 **Tízes** | 2–4 fő | Laprakós játék: foglalj tízesekkel! |
+| 🔐 **Széffeltörők** | 1–6 fő | Kooperatív kódfejtés. |
+| 🚩 **Aknapárbaj** | 2–4 fő | Versengő aknakereső. |
 | 🃏 **Makaó** | 2–6 fő | Kártyajáték: szabadulj meg elsőként a lapjaidtól (7-es: húzz kettőt, ász: kimaradsz, bubi: színkérés). |
 | 🎰 **Kockapóker** | 1–6 fő | Yahtzee: 5 kocka, 3 dobás, 13 kategória. |
 | 🚢 **Torpedó** | 2 fő | Süllyeszd el az ellenfél rejtett flottáját! |
@@ -24,7 +24,7 @@ Böngészőben játszható társasjátékok: mindenki a saját gépéről vagy t
 
 A részletes szabályok a játékban, a **Szabályok** résznél olvashatók.
 
-### 🦹 Tolvajok éjszakája (saját találmány)
+### 🦹 Tolvajok éjszakája
 
 - Mindenki 5 arannyal kezd. Minden körben egy játékos a **rendőr** (körbe jár), a többiek **tolvajok**.
 - A házakban minden körben gyűlik a zsákmány.
@@ -36,32 +36,32 @@ A részletes szabályok a játékban, a **Szabályok** résznél olvashatók.
 
 A lényeg a fejtörés: a nagy zsákmány mindenkit csábít, ezért oda veszélyes menni. A rendőr is tudja ezt…
 
-### 🎈 Lufi (saját találmány)
+### 🎈 Lufi
 
 - 5 kör, minden körben egy új lufi, aminek titkos a teherbírása (8 és 24 pumpa között).
 - Amikor sorra kerülsz, 1, 2 vagy 3-at pumpálsz – minden pumpa 1 pont –, vagy kiszállsz, és elteszed a kör pontjaidat.
 - Akinél kidurran a lufi, elveszíti az abban a körben gyűjtött pontjait.
 
-### ⛏️ Kincsásók (saját találmány)
+### ⛏️ Kincsásók
 
 - Kincsek vannak elrejtve a térképen. Felváltva ástok; ha kincset találsz, a tiéd.
 - Ha nem, csak TE látod, hány lépésre van a legközelebbi még el nem vitt kincs.
 - A többiek gödreit látod (a számaikat nem) – abból is lehet következtetni, hová érdemes ásni.
 
-### 🔟 Tízes (saját találmány)
+### 🔟 Tízes
 
 - Mindenkinek 3 titkos számlapja van (1–9). Felváltva leraktok egyet a táblára.
 - **Tízes:** ha a lerakott lap és egy szomszédos ellenfél-lap összege 10, elfoglalod.
 - **Összeg:** ha két szomszédos ellenfél-lap összege pont a lerakott lap, mindkettőt elfoglalod.
 - Tele táblánál az nyer, akinek a legtöbb lapja van.
 
-### 🔐 Széffeltörők (saját találmány, csapatjáték)
+### 🔐 Széffeltörők (csapatjáték)
 
 - Egy titkos 4 jegyű kód (1–6 számjegyek). Mindenki kap titkos nyomokat, amiket a chaten megoszthat.
 - Sorban tippeltek: ● = jó számjegy jó helyen, ○ = jó számjegy rossz helyen.
 - 8 próbálkozásotok van, utána megszólal a riasztó. Vagy mindenki nyer, vagy senki.
 
-### 🚩 Aknapárbaj (saját találmány)
+### 🚩 Aknapárbaj
 
 - Közös aknamező. Felfedés: +1 pont, aknára lépés: −3.
 - Jó zászló egy aknára: +3, és újra jössz. Rossz zászló: −2.

@@ -1,4 +1,4 @@
-// Széffeltörők – saját kitalálású kooperatív játék.
+// Széffeltörők – kooperatív játék.
 // Egy titkos 4 jegyű kód (1-6 számjegyek). Mindenki kap néhány titkos nyomot,
 // a chaten megbeszélhetitek. Sorban tippeltek; minden tipp után kiderül, hány számjegy
 // van jó helyen (●) és hány jó, de rossz helyen (○). Ha elfogynak a próbálkozások, megszólal a riasztó.
@@ -66,8 +66,7 @@ module.exports = {
   id: 'safe',
   name: 'Széffeltörők',
   emoji: '🔐',
-  description: 'Saját találmány! Csapatjáték: törjétek fel együtt a széf kódját, mielőtt megszólal a riasztó!',
-  original: true,
+  description: 'Csapatjáték: törjétek fel együtt a széf kódját, mielőtt megszólal a riasztó!',
   minPlayers: 1,
   maxPlayers: 6,
   rules: [

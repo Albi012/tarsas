@@ -20,7 +20,7 @@ const list = [
 const games = Object.fromEntries(list.map((g) => [g.id, g]));
 
 function catalog() {
-  return list.map(({ id, name, emoji, description, minPlayers, maxPlayers, rules, original }) => ({
+  return list.map(({ id, name, emoji, description, minPlayers, maxPlayers, rules }) => ({
     id,
     name,
     emoji,
@@ -28,7 +28,6 @@ function catalog() {
     minPlayers,
     maxPlayers,
     rules,
-    original: !!original,
   }));
 }
 

@@ -16,7 +16,6 @@ test('legalább 5 játék van, és mind teljes', () => {
       assert.ok(g[key] !== undefined, `${g.id}: hiányzik ${key}`);
     }
   }
-  assert.ok(catalog().some((g) => g.original), 'kell saját találmány');
 });
 
 test('amőba: 5 egy sorban nyer, foglalt mezőre nem lehet tenni', () => {

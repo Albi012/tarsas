@@ -1,4 +1,4 @@
-// Tolvajok éjszakája – saját kitalálású blöffjáték.
+// Tolvajok éjszakája – blöffjáték.
 //
 // Minden körben az egyik játékos a rendőr (körbe jár), a többiek tolvajok.
 // Mindenki titokban választ egy házat: a tolvajok, hogy hol törnek be, a rendőr,
@@ -89,8 +89,7 @@ module.exports = {
   id: 'thieves',
   name: 'Tolvajok éjszakája',
   emoji: '🦹',
-  description: 'Saját találmány! Blöffös tolvajjáték: rabold ki a legjobb házat, de ne ott, ahol a rendőr les!',
-  original: true,
+  description: 'Blöffös tolvajjáték: rabold ki a legjobb házat, de ne ott, ahol a rendőr les!',
   minPlayers: 2,
   maxPlayers: 6,
   rules: [

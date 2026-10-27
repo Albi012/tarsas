@@ -4,9 +4,8 @@ const { games, catalog } = require('../src/games');
 
 const names = (n) => ['Anna', 'Bence', 'Cili', 'Dani'].slice(0, n);
 
-test('15 játék van, ebből 6 saját', () => {
+test('15 játék van', () => {
   assert.strictEqual(catalog().length, 15);
-  assert.strictEqual(catalog().filter((g) => g.original).length, 6);
 });
 
 // ---- Makaó ----

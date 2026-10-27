@@ -1,4 +1,4 @@
-// Kincsásók – saját kitalálású dedukciós verseny.
+// Kincsásók – dedukciós verseny.
 // A térképen elrejtett kincsek vannak. Aki ás, csak ő tudja meg, milyen messze van
 // a legközelebbi még meg nem talált kincs (lépésben, átló nélkül). A gödröket mindenki látja.
 
@@ -20,8 +20,7 @@ module.exports = {
   id: 'digger',
   name: 'Kincsásók',
   emoji: '⛏️',
-  description: 'Saját találmány! Ásd ki a rejtett kincseket – a nyomokat csak te látod, a gödreidet mindenki.',
-  original: true,
+  description: 'Ásd ki a rejtett kincseket – a nyomokat csak te látod, a gödreidet mindenki.',
   minPlayers: 2,
   maxPlayers: 6,
   rules: [

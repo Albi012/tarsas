@@ -1,4 +1,4 @@
-// Tízes – saját kitalálású laprakós játék.
+// Tízes – laprakós játék.
 // Számlapokat (1-9) raktok a táblára. Elfoglalod az ellenfél szomszédos lapját, ha
 //   - a lerakott lappal együtt pont 10 (pl. 3 mellé 7), vagy
 //   - két ellenfél-szomszéd összege pont a lerakott lap (pl. 3 és 4 közé 7).
@@ -33,8 +33,7 @@ module.exports = {
   id: 'tens',
   name: 'Tízes',
   emoji: '🔟',
-  description: 'Saját találmány! Rakj számokat a táblára, és foglald el a többiek lapjait tízesekkel!',
-  original: true,
+  description: 'Rakj számokat a táblára, és foglald el a többiek lapjait tízesekkel!',
   minPlayers: 2,
   maxPlayers: 4,
   rules: [

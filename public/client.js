@@ -146,7 +146,6 @@ function renderHome() {
             if (name) send({ type: 'create', name, gameId: g.id });
           },
         },
-        g.original ? UI.el('span', { class: 'badge' }, '✨ Saját találmány') : null,
         UI.el('span', { class: 'emoji' }, g.emoji),
         UI.el('strong', {}, g.name),
         UI.el('span', { class: 'players' }, playersText(g)),

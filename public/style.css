@@ -70,7 +70,6 @@ button.small { padding: 4px 8px; font-size: 0.85rem; margin-left: 8px; }
 
 .game-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
 .game-card {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -89,17 +88,6 @@ button.small { padding: 4px 8px; font-size: 0.85rem; margin-left: 8px; }
 .game-card strong { font-size: 1.1rem; }
 .game-card .players { font-size: 0.85rem; color: var(--accent); font-weight: 600; }
 .game-card .desc { font-size: 0.9rem; color: var(--muted); }
-.badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: #fff0c2;
-  color: #8a5a00;
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 999px;
-}
 
 /* ---- Szoba ---- */
 

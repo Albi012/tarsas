@@ -1,4 +1,4 @@
-// Lufi – saját kitalálású kockáztatós játék.
+// Lufi – kockáztatós játék.
 // Minden körben egy új lufi, aminek titkos a teherbírása. Aki soron van, 1-3-at pumpál
 // (minden pumpa 1 pont a kör kasszájába), vagy kiszáll és elteszi a kör pontjait.
 // Akinél kidurran, elveszíti a körben gyűjtött pontjait.
@@ -44,8 +44,7 @@ module.exports = {
   id: 'balloon',
   name: 'Lufi',
   emoji: '🎈',
-  description: 'Saját találmány! Pumpáld a közös lufit – de ne nálad durranjon ki!',
-  original: true,
+  description: 'Pumpáld a közös lufit – de ne nálad durranjon ki!',
   minPlayers: 2,
   maxPlayers: 6,
   rules: [

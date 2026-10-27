@@ -1,4 +1,4 @@
-// Aknapárbaj – saját kitalálású versengő aknakereső.
+// Aknapárbaj – versengő aknakereső.
 // Közös aknamező; felváltva felfedtek egy mezőt vagy megjelöltök egy aknát.
 
 const SAFE_POINTS = 1;
@@ -58,8 +58,7 @@ module.exports = {
   id: 'mines',
   name: 'Aknapárbaj',
   emoji: '🚩',
-  description: 'Saját találmány! Versengő aknakereső: fedj fel, jelölj aknát, és ne lépj bele!',
-  original: true,
+  description: 'Versengő aknakereső: fedj fel, jelölj aknát, és ne lépj bele!',
   minPlayers: 2,
   maxPlayers: 4,
   rules: [
