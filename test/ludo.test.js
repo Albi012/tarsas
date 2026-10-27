@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const Game = require('../src/game');
+const Game = require('../src/games/ludo')._internal;
 
 // determinisztikus kocka: a megadott dobásokat adja vissza sorban
 function dice(...values) {

@@ -1,60 +1,83 @@
-// Kliens: a tábla kirajzolása és üzenetek a szerverrel.
+// Kliens alap: főoldal, szoba, chat. Az egyes játékok rajzolói a games/ mappában vannak,
+// és a `Renderers` objektumba regisztrálják magukat.
 
-const COLOR_NAMES = ['Piros', 'Kék', 'Zöld', 'Sárga'];
-const COLOR_VARS = ['var(--c0)', 'var(--c1)', 'var(--c2)', 'var(--c3)'];
+const PALETTE = ['var(--c0)', 'var(--c1)', 'var(--c2)', 'var(--c3)', 'var(--c4)', 'var(--c5)'];
+const SVG_NS = 'http://www.w3.org/2000/svg';
 // pöttyök helye a kocka 3x3-as rácsán (0..8)
 const DICE_PIPS = [[], [4], [0, 8], [0, 4, 8], [0, 2, 6, 8], [0, 2, 4, 6, 8], [0, 2, 3, 5, 6, 8]];
 
-// A 40 pályamező koordinátái (oszlop, sor) a 11x11-es rácson, a piros start mezőtől körbe.
-const TRACK = [
-  [0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [4, 3], [4, 2], [4, 1], [4, 0], [5, 0],
-  [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [7, 4], [8, 4], [9, 4], [10, 4], [10, 5],
-  [10, 6], [9, 6], [8, 6], [7, 6], [6, 6], [6, 7], [6, 8], [6, 9], [6, 10], [5, 10],
-  [4, 10], [4, 9], [4, 8], [4, 7], [4, 6], [3, 6], [2, 6], [1, 6], [0, 6], [0, 5],
-];
-const FINISH = [
-  [[1, 5], [2, 5], [3, 5], [4, 5]],
-  [[5, 1], [5, 2], [5, 3], [5, 4]],
-  [[9, 5], [8, 5], [7, 5], [6, 5]],
-  [[5, 9], [5, 8], [5, 7], [5, 6]],
-];
-const BASES = [
-  [[0, 0], [1, 0], [0, 1], [1, 1]],
-  [[9, 0], [10, 0], [9, 1], [10, 1]],
-  [[9, 9], [10, 9], [9, 10], [10, 10]],
-  [[0, 9], [1, 9], [0, 10], [1, 10]],
-];
+const Renderers = {};
+
+// Apró DOM segédek, a játék-rajzolók is ezeket használják.
+const UI = {
+  el(tag, attrs = {}, ...children) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'class') node.className = v;
+      else if (k === 'style') Object.assign(node.style, v);
+      else if (k.startsWith('on')) node.addEventListener(k.slice(2), v);
+      else if (v === true) node.setAttribute(k, '');
+      else if (v !== false && v !== null && v !== undefined) node.setAttribute(k, v);
+    }
+    node.append(...children.flat().filter((c) => c !== null && c !== undefined && c !== false));
+    return node;
+  },
+
+  svg(tag, attrs = {}) {
+    const node = document.createElementNS(SVG_NS, tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === 'style') Object.assign(node.style, v);
+      else if (k.startsWith('on')) node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v);
+    }
+    return node;
+  },
+
+  dot(color) {
+    return UI.el('span', { class: 'dot', style: { background: color ?? '#bbb' } });
+  },
+
+  // kocka SVG-ként; value 0 = még nem dobott
+  dice(value, extraClass = '') {
+    const svg = UI.svg('svg', { viewBox: '0 0 3 3', class: `die ${extraClass}` });
+    svg.append(UI.svg('rect', { x: 0.05, y: 0.05, width: 2.9, height: 2.9, rx: 0.45, class: 'die-bg' }));
+    if (value) {
+      for (const i of DICE_PIPS[value]) {
+        svg.append(UI.svg('circle', { cx: (i % 3) + 0.5, cy: Math.floor(i / 3) + 0.5, r: 0.3, class: 'pip' }));
+      }
+    } else {
+      const q = UI.svg('text', { x: 1.5, y: 2.05, 'text-anchor': 'middle', class: 'die-q' });
+      q.textContent = '?';
+      svg.append(q);
+    }
+    return svg;
+  },
+};
 
 const $ = (id) => document.getElementById(id);
-const SVG_NS = 'http://www.w3.org/2000/svg';
 
 const clientId = loadClientId();
 let ws;
+let catalog = [];
 let state = null;
-let lastDiceKey = null;
-
-function loadClientId() {
-  let id;
-  try {
-    id = localStorage.getItem('clientId');
-    if (!id) {
-      id = Math.random().toString(36).slice(2) + Date.now().toString(36);
-      localStorage.setItem('clientId', id);
-    }
-  } catch {
-    id = Math.random().toString(36).slice(2);
-  }
-  return id;
-}
 
 function storage(key, value) {
   try {
     if (value === undefined) return localStorage.getItem(key);
-    if (value === null) localStorage.removeItem(key);
-    else localStorage.setItem(key, value);
+    localStorage.setItem(key, value);
   } catch {
     return null;
   }
+  return null;
+}
+
+function loadClientId() {
+  let id = storage('clientId');
+  if (!id) {
+    id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+    storage('clientId', id);
+  }
+  return id;
 }
 
 function connect() {
@@ -76,10 +99,13 @@ function send(msg) {
 }
 
 function handle(msg) {
-  if (msg.type === 'room') {
+  if (msg.type === 'hello') {
+    catalog = msg.games;
+    renderHome();
+  } else if (msg.type === 'room') {
     state = msg;
     history.replaceState(null, '', `?room=${msg.code}`);
-    render();
+    renderRoom();
   } else if (msg.type === 'chat') {
     addMessage(msg);
   } else if (msg.type === 'error') {
@@ -88,7 +114,7 @@ function handle(msg) {
   }
 }
 
-// ---- Lobby ----
+// ---- Főoldal ----
 
 $('name').value = storage('name') || '';
 $('code').value = new URLSearchParams(location.search).get('room') || '';
@@ -96,7 +122,7 @@ $('code').value = new URLSearchParams(location.search).get('room') || '';
 function getName() {
   const name = $('name').value.trim();
   if (!name) {
-    toast('Add meg a neved!');
+    toast('Előbb add meg a neved!');
     $('name').focus();
     return null;
   }
@@ -104,10 +130,31 @@ function getName() {
   return name;
 }
 
-$('create').onclick = () => {
-  const name = getName();
-  if (name) send({ type: 'create', name });
-};
+function playersText(g) {
+  return g.minPlayers === g.maxPlayers ? `${g.minPlayers} fő` : `${g.minPlayers}–${g.maxPlayers} fő`;
+}
+
+function renderHome() {
+  $('game-list').replaceChildren(
+    ...catalog.map((g) =>
+      UI.el(
+        'button',
+        {
+          class: 'game-card',
+          onclick: () => {
+            const name = getName();
+            if (name) send({ type: 'create', name, gameId: g.id });
+          },
+        },
+        g.original ? UI.el('span', { class: 'badge' }, '✨ Saját találmány') : null,
+        UI.el('span', { class: 'emoji' }, g.emoji),
+        UI.el('strong', {}, g.name),
+        UI.el('span', { class: 'players' }, playersText(g)),
+        UI.el('span', { class: 'desc' }, g.description),
+      ),
+    ),
+  );
+}
 
 $('join').onclick = () => {
   const name = getName();
@@ -118,6 +165,8 @@ $('join').onclick = () => {
 };
 
 $('code').addEventListener('keydown', (e) => e.key === 'Enter' && $('join').click());
+
+// ---- Szoba ----
 
 $('copy-link').onclick = async () => {
   const link = `${location.origin}${location.pathname}?room=${state.code}`;
@@ -130,8 +179,11 @@ $('copy-link').onclick = async () => {
 };
 
 $('start').onclick = () => send({ type: 'start' });
-$('restart').onclick = () => send({ type: 'restart' });
-$('dice').onclick = () => send({ type: 'roll' });
+$('restart').onclick = () => {
+  if (state.game && !state.game.finished && !confirm('Biztosan befejezed a játékot mindenkinek?')) return;
+  send({ type: 'restart' });
+};
+$('game-select').onchange = (e) => send({ type: 'chooseGame', gameId: e.target.value });
 
 $('chat-form').onsubmit = (e) => {
   e.preventDefault();
@@ -140,173 +192,132 @@ $('chat-form').onsubmit = (e) => {
   $('chat-input').value = '';
 };
 
-// ---- Megjelenítés ----
-
 function me() {
-  return state && state.players.find((p) => p.id === clientId);
+  return state.players.find((p) => p.id === clientId);
 }
 
-function playerOf(color) {
-  return state.players.find((p) => p.color === color);
+function bySeat(seat) {
+  return state.players.find((p) => p.seat === seat);
 }
 
-function render() {
-  $('lobby').hidden = true;
+function colorOf(seat) {
+  const p = bySeat(seat);
+  return p && p.color !== null ? PALETTE[p.color] : '#bbb';
+}
+
+function renderRoom() {
+  $('home').hidden = true;
   $('room').hidden = false;
   $('room-code').textContent = state.code;
   $('room-label').textContent = `Szoba: ${state.code}`;
 
-  const game = state.game;
+  const info = catalog.find((g) => g.id === state.gameId);
+  const view = state.game;
   const isHost = state.hostId === clientId;
+  const n = state.players.length;
 
-  const list = $('players');
-  list.innerHTML = '';
-  state.players.forEach((p) => {
-    const li = document.createElement('li');
-    if (!p.online) li.className = 'offline';
-    const dot = document.createElement('span');
-    dot.className = 'dot';
-    if (p.color !== null) dot.style.background = COLOR_VARS[p.color];
-    li.append(dot);
-    let label = p.name;
-    if (p.id === state.hostId) label += ' 👑';
-    if (p.id === clientId) label += ' (te)';
-    if (!p.online) label += ' – kilépett';
-    li.append(document.createTextNode(label));
-    if (game && game.winners.includes(p.color)) {
-      li.append(mark(`${game.winners.indexOf(p.color) + 1}. hely`));
-    } else if (game && !game.finished && game.turn === p.color) {
-      li.append(mark('◀ jön'));
-    }
-    list.append(li);
-  });
+  $('game-title').replaceChildren(UI.el('span', { class: 'emoji' }, info.emoji), ` ${info.name}`, UI.el('span', { class: 'muted' }, ` (${playersText(info)})`));
+  $('rules-list').replaceChildren(...info.rules.map((r) => UI.el('li', {}, r)));
 
-  $('start').hidden = !!game || !isHost;
-  $('start').disabled = state.players.length < 2;
-  $('restart').hidden = !(game && game.finished && isHost);
-  $('waiting').textContent = game
-    ? ''
-    : isHost
-      ? state.players.length < 2
-        ? 'Várj, amíg legalább még egy játékos csatlakozik (max. 4).'
-        : 'Ha mindenki itt van, indíthatod a játékot!'
-      : 'Várakozás, hogy a házigazda elindítsa a játékot...';
-
-  $('controls').hidden = !game;
-  if (game) renderControls(game);
-  drawBoard(game);
-}
-
-function mark(text) {
-  const span = document.createElement('span');
-  span.className = 'turn-mark';
-  span.textContent = text;
-  return span;
-}
-
-function renderControls(game) {
-  const myTurn = !game.finished && me() && me().color === game.turn;
-  const current = playerOf(game.turn);
-  const dice = $('dice');
-
-  drawDice(dice, game.dice);
-  dice.disabled = !myTurn || game.rolled;
-  const diceKey = JSON.stringify(game.lastEvent);
-  if (game.lastEvent && game.lastEvent.type === 'roll' && diceKey !== lastDiceKey) {
-    dice.classList.remove('rolling');
-    void dice.offsetWidth;
-    dice.classList.add('rolling');
+  const select = $('game-select');
+  select.hidden = !isHost || !!view;
+  if (!select.hidden) {
+    select.replaceChildren(...catalog.map((g) => UI.el('option', { value: g.id, selected: g.id === state.gameId }, `${g.emoji} ${g.name} (${playersText(g)})`)));
   }
-  lastDiceKey = diceKey;
 
-  if (game.finished) {
-    $('status').textContent = `🏆 ${playerOf(game.winners[0]).name} nevet a végén!`;
-    $('hint').textContent = '';
+  $('players').replaceChildren(
+    ...state.players.map((p) => {
+      let label = p.name;
+      if (p.id === state.hostId) label += ' 👑';
+      if (p.id === clientId) label += ' (te)';
+      if (!p.online) label += ' – kilépett';
+      let mark = null;
+      if (view && view.finished && view.winners.includes(p.seat)) mark = '🏆';
+      else if (view && !view.finished && view.turn === p.seat) mark = '◀ jön';
+      else if (view && view.waiting && view.waiting.includes(p.seat)) mark = 'gondolkodik…';
+      return UI.el(
+        'li',
+        { class: p.online ? '' : 'offline' },
+        UI.dot(p.color === null ? null : PALETTE[p.color]),
+        label,
+        mark && UI.el('span', { class: 'turn-mark' }, mark),
+      );
+    }),
+  );
+
+  const fits = n >= info.minPlayers && n <= info.maxPlayers;
+  $('start').hidden = !!view || !isHost;
+  $('start').disabled = !fits;
+  // a házigazda bármikor visszaléphet a váróba (pl. ha valaki végleg kilépett)
+  $('restart').hidden = !(view && isHost);
+  $('restart').textContent = view && view.finished ? 'Új játék / másik játék' : 'Játék befejezése';
+  let waiting = '';
+  if (!view) {
+    if (!isHost) waiting = 'Várakozás, hogy a házigazda elindítsa a játékot...';
+    else if (n < info.minPlayers) waiting = `Még ${info.minPlayers - n} játékos kell. Küldd el nekik a linket!`;
+    else if (n > info.maxPlayers) waiting = `Ehhez a játékhoz legfeljebb ${info.maxPlayers} játékos kell – válassz másikat!`;
+    else waiting = 'Ha mindenki itt van, indíthatod!';
+  }
+  $('waiting').textContent = waiting;
+
+  renderStatus(view);
+  const area = $('game-area');
+  if (!view) {
+    area.replaceChildren(
+      UI.el('div', { class: 'placeholder' }, UI.el('div', { class: 'emoji big' }, info.emoji), UI.el('h2', {}, info.name), UI.el('p', { class: 'muted' }, info.description)),
+    );
+    area.dataset.game = '';
     return;
   }
-
-  $('status').innerHTML = '';
-  const dot = document.createElement('span');
-  dot.className = 'dot';
-  dot.style.background = COLOR_VARS[game.turn];
-  $('status').append(dot, document.createTextNode(myTurn ? ' Te jössz!' : ` ${current.name} következik`));
-
-  let hint = '';
-  if (myTurn && !game.rolled) {
-    hint = game.dice && game.tries > 0 ? `Nem jött hatos, dobj újra! (${game.tries}/3)` : 'Kattints a kockára!';
-  } else if (myTurn && game.movable.length) {
-    hint = 'Válassz egy villogó bábut!';
-  } else if (game.rolled && !game.movable.length) {
-    hint = 'Nincs lehetséges lépés, a kör továbbmegy.';
+  if (area.dataset.game !== state.gameId) {
+    area.replaceChildren();
+    area.dataset.game = state.gameId;
   }
-  $('hint').textContent = hint;
+  const mine = me();
+  Renderers[state.gameId].render(area, view, {
+    mySeat: mine ? mine.seat : null,
+    myTurn: !!(mine && mine.seat !== null && view.turn === mine.seat && !view.finished),
+    name: (seat) => (bySeat(seat) || { name: '?' }).name,
+    color: colorOf,
+    send: (action) => send({ type: 'action', action }),
+  });
 }
 
-function drawDice(button, value) {
-  const svg = el('svg', { viewBox: '0 0 3 3' });
-  if (value) {
-    for (const i of DICE_PIPS[value]) {
-      svg.append(el('circle', { cx: (i % 3) + 0.5, cy: Math.floor(i / 3) + 0.5, r: 0.32, class: 'pip' }));
-    }
+function renderStatus(view) {
+  const status = $('status');
+  status.classList.remove('mine');
+  if (!view) {
+    status.replaceChildren('Várakozás a játékosokra...');
+  } else if (view.finished) {
+    const names = view.winners.map((s) => bySeat(s).name);
+    status.replaceChildren(names.length ? `🏆 ${names.join(', ')} nyert!` : '🤝 Döntetlen!');
+  } else if (view.turn !== null && view.turn !== undefined) {
+    const mine = me();
+    const myTurn = mine && mine.seat === view.turn;
+    status.replaceChildren(UI.dot(colorOf(view.turn)), myTurn ? ' Te jössz!' : ` ${bySeat(view.turn).name} következik`);
+    status.classList.toggle('mine', !!myTurn);
+  } else if (view.waiting && view.waiting.length) {
+    // egyszerre lépős játék: kire várunk még
+    const mine = me();
+    const iMustAct = mine && view.waiting.includes(mine.seat);
+    const others = view.waiting.filter((s) => !mine || s !== mine.seat).map((s) => bySeat(s).name);
+    let text = `Még rájuk várunk: ${others.join(', ')}`;
+    if (iMustAct) text = others.length ? `Te is válassz! ${text}` : 'Már csak rád várnak, válassz!';
+    status.replaceChildren(text);
+    status.classList.toggle('mine', !!iMustAct);
   } else {
-    const q = el('text', { x: 1.5, y: 2.05, 'text-anchor': 'middle', class: 'q' });
-    q.textContent = '?';
-    svg.append(q);
-  }
-  button.replaceChildren(svg);
-}
-
-function el(name, attrs) {
-  const node = document.createElementNS(SVG_NS, name);
-  for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
-  return node;
-}
-
-function circle(svg, [x, y], r, fill, cls = 'cell') {
-  const c = el('circle', { cx: x + 0.5, cy: y + 0.5, r, class: cls });
-  if (fill) c.style.fill = fill;
-  svg.append(c);
-  return c;
-}
-
-function tint(color) {
-  return `color-mix(in srgb, ${COLOR_VARS[color]} 30%, white)`;
-}
-
-function drawBoard(game) {
-  const svg = $('board');
-  svg.innerHTML = '';
-
-  TRACK.forEach((pos, i) => circle(svg, pos, 0.42, i % 10 === 0 ? tint(i / 10) : null));
-  FINISH.forEach((cells, color) => cells.forEach((pos) => circle(svg, pos, 0.42, tint(color))));
-  BASES.forEach((cells, color) => cells.forEach((pos) => circle(svg, pos, 0.42, tint(color))));
-
-  if (!game) return;
-
-  const myTurn = me() && me().color === game.turn && !game.finished;
-  for (const color of game.colors) {
-    game.pieces[color].forEach((p, idx) => {
-      let pos;
-      if (p === -1) pos = BASES[color][idx];
-      else if (p < 40) pos = TRACK[(color * 10 + p) % 40];
-      else pos = FINISH[color][p - 40];
-      const movable = myTurn && color === game.turn && game.movable.includes(idx);
-      const piece = circle(svg, pos, 0.32, COLOR_VARS[color], movable ? 'piece movable' : 'piece');
-      if (movable) piece.addEventListener('click', () => send({ type: 'move', piece: idx }));
-    });
+    status.replaceChildren('');
   }
 }
 
 function addMessage(msg) {
-  const li = document.createElement('li');
+  let li;
   if (msg.system) {
-    li.className = 'system';
-    li.textContent = msg.text;
+    li = UI.el('li', { class: 'system' }, msg.text);
   } else {
-    const name = document.createElement('strong');
-    name.textContent = `${msg.name}: `;
-    if (msg.color !== null) name.style.color = COLOR_VARS[msg.color];
-    li.append(name, document.createTextNode(msg.text));
+    const p = state && state.players.find((x) => x.id === msg.id);
+    const color = p && p.color !== null ? PALETTE[p.color] : null;
+    li = UI.el('li', {}, UI.el('strong', { style: { color } }, `${msg.name}: `), msg.text);
   }
   const list = $('messages');
   list.append(li);

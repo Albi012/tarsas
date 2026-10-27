@@ -3,48 +3,55 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ki nevet a végén?</title>
+  <title>Társasozó</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
-    <h1>🎲 Ki nevet a végén?</h1>
+    <a href="/" id="home-link"><h1>🎲 Társasozó</h1></a>
     <span id="room-label"></span>
   </header>
 
   <main>
-    <section id="lobby" class="card">
-      <label>A neved
-        <input id="name" maxlength="20" placeholder="pl. Peti" autocomplete="nickname">
-      </label>
-      <button id="create">Új szoba létrehozása</button>
-      <div class="or">vagy</div>
-      <div class="row">
-        <input id="code" maxlength="4" placeholder="KÓD" autocapitalize="characters">
-        <button id="join">Csatlakozás</button>
+    <section id="home">
+      <div class="card intro">
+        <label>A neved
+          <input id="name" maxlength="20" placeholder="pl. Peti" autocomplete="nickname">
+        </label>
+        <div class="join">
+          <span class="muted">Van már kódod?</span>
+          <div class="row">
+            <input id="code" maxlength="4" placeholder="KÓD" autocapitalize="characters">
+            <button id="join">Csatlakozás</button>
+          </div>
+        </div>
       </div>
+      <h2>Válassz játékot, és hívd meg a haverjaidat!</h2>
+      <div id="game-list" class="game-list"></div>
     </section>
 
     <section id="room" hidden>
       <div class="layout">
-        <div class="board-wrap">
-          <svg id="board" viewBox="0 0 11 11" aria-label="Játéktábla"></svg>
+        <div>
+          <div id="status" class="status"></div>
+          <div id="game-area" class="game-area"></div>
         </div>
         <aside>
           <div class="card">
-            <div id="share">
+            <div class="share">
               Szobakód: <strong id="room-code"></strong>
               <button id="copy-link" class="small">Link másolása</button>
             </div>
+            <div class="game-title" id="game-title"></div>
+            <select id="game-select" hidden aria-label="Játék kiválasztása"></select>
             <ul id="players"></ul>
             <button id="start" hidden>Játék indítása</button>
-            <button id="restart" hidden>Új játék</button>
+            <button id="restart" hidden></button>
             <p id="waiting" class="muted"></p>
-          </div>
-          <div class="card" id="controls" hidden>
-            <div id="status"></div>
-            <button id="dice" class="dice" disabled aria-label="Dobás"></button>
-            <p id="hint" class="muted"></p>
+            <details id="rules">
+              <summary>Szabályok</summary>
+              <ul id="rules-list"></ul>
+            </details>
           </div>
           <div class="card chat">
             <ul id="messages"></ul>
@@ -60,5 +67,10 @@
 
   <div id="toast" hidden></div>
   <script src="client.js"></script>
+  <script src="games/ludo.js"></script>
+  <script src="games/thieves.js"></script>
+  <script src="games/yahtzee.js"></script>
+  <script src="games/malom.js"></script>
+  <script src="games/grid.js"></script>
 </body>
 </html>

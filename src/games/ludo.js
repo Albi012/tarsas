@@ -1,16 +1,18 @@
-// "Ki nevet a végén?" játéklogika – a szerver ez alapján dönt mindenről.
+// "Ki nevet a végén?" játéklogika.
 //
 // Bábu pozíció (a saját színhez viszonyítva):
 //   -1        : házban (bázis)
 //   0..39     : a pályán, ennyi lépésre a saját start mezőtől
 //   40..43    : a célegyenesben
 // Abszolút pályamező: (szín * 10 + pozíció) % 40
+// Az ülőhely (seat) indexe megegyezik a `colors` tömb indexével.
 
 const TRACK_LENGTH = 40;
 const FINISH_LENGTH = 4;
 const PIECES = 4;
 const LAST_POS = TRACK_LENGTH + FINISH_LENGTH - 1;
 const MAX_TRIES_WHEN_STUCK = 3;
+const PASS_DELAY_MS = 1200;
 
 function absolute(color, pos) {
   return (color * 10 + pos) % TRACK_LENGTH;
@@ -32,6 +34,7 @@ function createGame(playerCount, rng = Math.random) {
     tries: 0,
     winners: [],
     finished: false,
+    pendingPass: false,
     lastEvent: null,
     rng,
   };
@@ -57,7 +60,7 @@ function targetOf(game, color, idx, dice) {
 }
 
 function legalMoves(game) {
-  if (!game.rolled || game.finished) return [];
+  if (!game.rolled || game.finished || game.pendingPass) return [];
   const color = currentColor(game);
   const own = game.pieces[color];
   const moves = [];
@@ -74,7 +77,7 @@ function legalMoves(game) {
 // Ha nincs bábu a pályán (mind házban vagy a cél végén zárva), 3x lehet dobni.
 function isStuck(game, color) {
   const own = game.pieces[color];
-  return own.every((p, i) => {
+  return own.every((p) => {
     if (p === -1) return true;
     if (p < TRACK_LENGTH) return false;
     // célban lévő bábu csak akkor "kész", ha nem tud már előrébb lépni
@@ -162,30 +165,70 @@ function move(game, idx) {
   }
 }
 
-function publicState(game) {
-  return {
-    colors: game.colors,
-    pieces: game.pieces,
-    turn: currentColor(game),
-    dice: game.dice,
-    rolled: game.rolled,
-    tries: game.tries,
-    winners: game.winners,
-    finished: game.finished,
-    lastEvent: game.lastEvent,
-    movable: legalMoves(game),
-  };
-}
-
 module.exports = {
-  TRACK_LENGTH,
-  FINISH_LENGTH,
-  createGame,
-  currentColor,
-  legalMoves,
-  roll,
-  move,
-  passIfNoMoves,
-  publicState,
-  absolute,
+  id: 'ludo',
+  name: 'Ki nevet a végén?',
+  emoji: '🎲',
+  description: 'A klasszikus: vidd haza mind a 4 bábudat, és üsd ki a többieket!',
+  minPlayers: 2,
+  maxPlayers: 4,
+  rules: [
+    'Házból csak hatossal lehet kijönni. Ha nincs bábud a pályán, 3-szor dobhatsz.',
+    'Hatos után újra dobhatsz.',
+    'Ha ellenfél bábujára lépsz, kiütöd – visszamegy a házába.',
+    'Saját bábudra nem léphetsz, és a célegyenesben nem lehet túllépni a végét.',
+    'Az nyer, aki elsőként beviszi mind a 4 bábuját.',
+  ],
+
+  create({ names, rng }) {
+    const game = createGame(names.length, rng);
+    game.names = names;
+    return game;
+  },
+
+  seatColors(game) {
+    return game.colors;
+  },
+
+  act(game, seat, action) {
+    if (game.turn !== seat) throw new Error('Nem te következel');
+    if (action.type === 'roll') {
+      roll(game);
+      return game.pendingPass ? { advanceAfter: PASS_DELAY_MS } : undefined;
+    }
+    if (action.type === 'move') {
+      move(game, Number(action.piece));
+      const ev = game.lastEvent;
+      if (ev.captured !== null) {
+        const victim = game.colors.indexOf(ev.captured);
+        return { log: [`${game.names[seat]} kiütötte ${game.names[victim]} bábuját!`] };
+      }
+      return undefined;
+    }
+    throw new Error('Ismeretlen lépés');
+  },
+
+  advance(game) {
+    return passIfNoMoves(game);
+  },
+
+  view(game) {
+    return {
+      colors: game.colors,
+      pieces: game.pieces,
+      turn: game.finished ? null : game.turn,
+      dice: game.dice,
+      rolled: game.rolled,
+      tries: game.tries,
+      pendingPass: game.pendingPass,
+      lastEvent: game.lastEvent,
+      movable: legalMoves(game),
+      finished: game.finished,
+      ranking: game.winners.map((c) => game.colors.indexOf(c)),
+      winners: game.finished ? [game.colors.indexOf(game.winners[0])] : [],
+    };
+  },
+
+  // tesztekhez
+  _internal: { createGame, currentColor, legalMoves, roll, move, passIfNoMoves },
 };
