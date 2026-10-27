@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ki nevet a végén?</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>🎲 Ki nevet a végén?</h1>
+    <span id="room-label"></span>
+  </header>
+
+  <main>
+    <section id="lobby" class="card">
+      <label>A neved
+        <input id="name" maxlength="20" placeholder="pl. Peti" autocomplete="nickname">
+      </label>
+      <button id="create">Új szoba létrehozása</button>
+      <div class="or">vagy</div>
+      <div class="row">
+        <input id="code" maxlength="4" placeholder="KÓD" autocapitalize="characters">
+        <button id="join">Csatlakozás</button>
+      </div>
+    </section>
+
+    <section id="room" hidden>
+      <div class="layout">
+        <div class="board-wrap">
+          <svg id="board" viewBox="0 0 11 11" aria-label="Játéktábla"></svg>
+        </div>
+        <aside>
+          <div class="card">
+            <div id="share">
+              Szobakód: <strong id="room-code"></strong>
+              <button id="copy-link" class="small">Link másolása</button>
+            </div>
+            <ul id="players"></ul>
+            <button id="start" hidden>Játék indítása</button>
+            <button id="restart" hidden>Új játék</button>
+            <p id="waiting" class="muted"></p>
+          </div>
+          <div class="card" id="controls" hidden>
+            <div id="status"></div>
+            <button id="dice" class="dice" disabled aria-label="Dobás"></button>
+            <p id="hint" class="muted"></p>
+          </div>
+          <div class="card chat">
+            <ul id="messages"></ul>
+            <form id="chat-form">
+              <input id="chat-input" maxlength="200" placeholder="Üzenet..." autocomplete="off">
+              <button>Küld</button>
+            </form>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" hidden></div>
+  <script src="client.js"></script>
+</body>
+</html>
