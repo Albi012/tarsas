@@ -98,6 +98,10 @@ function applyResult(room, result) {
 function announceEnd(room) {
   const view = gameOf(room).view(room.state, null);
   if (!view.finished) return;
+  if (view.resultText) {
+    systemMessage(room, view.resultText);
+    return;
+  }
   const winners = view.winners.map((seat) => room.players.find((p) => p.seat === seat).name);
   systemMessage(room, winners.length ? `🏆 Vége! Nyert: ${winners.join(', ')}` : '🤝 Vége! Döntetlen.');
 }

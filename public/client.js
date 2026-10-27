@@ -288,6 +288,8 @@ function renderStatus(view) {
   status.classList.remove('mine');
   if (!view) {
     status.replaceChildren('Várakozás a játékosokra...');
+  } else if (view.finished && view.resultText) {
+    status.replaceChildren(view.resultText);
   } else if (view.finished) {
     const names = view.winners.map((s) => bySeat(s).name);
     status.replaceChildren(names.length ? `🏆 ${names.join(', ')} nyert!` : '🤝 Döntetlen!');

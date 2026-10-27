@@ -2,6 +2,11 @@
 const list = [
   require('./ludo'),
   require('./thieves'),
+  require('./balloon'),
+  require('./digger'),
+  require('./tens'),
+  require('./safe'),
+  require('./mines'),
   require('./makao'),
   require('./yahtzee'),
   require('./torpedo'),
